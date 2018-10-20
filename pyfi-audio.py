@@ -1,6 +1,7 @@
-import vlc, eyed3
+import vlc
+import eyed3
 import os
-
+import operator
 
 class SongPlayer(object):
 
@@ -23,9 +24,29 @@ class SongPlayer(object):
     def play_previous_track(self):
         self.player.previous()
 
+    def first_item_in_nested_list(self, nested_list):
+        first_item_list = []
+        for full_item in nested_list:
+            first_item_list.append(full_item[0])
+        
+        return first_item_list
+
     def create_playlist_from_folder(self, root_directory):
+        # Get list of songs in the directory and sort them by their metadata
         song_list = self.get_audio_files_in_directory(root_directory)
-        self.create_playlist(song_list)
+        metadata = self.get_metadata_sorted(song_list)
+        sorted_songs = self.first_item_in_nested_list(metadata)
+
+        # Debug
+        print("~~~Song List~~~")
+        print(song_list)
+        print("~~~Metadata~~~")
+        print(metadata)
+        print("~~~Sorted Songs~~~")
+        print(sorted_songs)
+
+        # Build the playlist
+        self.create_playlist(sorted_songs)
 
     def create_playlist(self, song_list):
         media_list = self.instance.media_list_new(song_list)
@@ -59,12 +80,27 @@ class SongPlayer(object):
         p.create_playlist_from_folder(album_path)
         p.start_playback()
 
+    def get_metadata_sorted(self, file_list):
 
+        # Pull out the metadata
+        all_files_metadata = []
+        for file in file_list:
+            metadata = eyed3.load(file)
+            metadata_list = [file, metadata.tag.track_num[0], metadata.tag.disc_num[0], metadata.tag.album]
+            all_files_metadata.append(metadata_list)
+        
+        # Sort it (Filename - track num - disk num - album name)
+        all_files_metadata = sorted(all_files_metadata, key=operator.itemgetter(0,1,2,3))
+
+        return all_files_metadata
+
+
+        
 if __name__ == "__main__":
     p = SongPlayer()
-    # p.change_album("/share/Rammstein/Mutter")
-    file_list = p.get_audio_files_in_directory("/share/Rammstein/Mutter")
-    audiofile = eyed3.load(file_list[0])
-    print(audiofile.tag)
-    print()
-    #get_meta
+    p.change_album("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
+
+    #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
+    #file_list=p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Emerson, Lake & Palmer\\Pictures At An Exhibition")
+    #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\test")
+    
