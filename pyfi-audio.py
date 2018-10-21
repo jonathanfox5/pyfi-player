@@ -2,6 +2,7 @@ import vlc
 import eyed3
 import os
 import operator
+import time
 
 class SongPlayer(object):
 
@@ -48,9 +49,9 @@ class SongPlayer(object):
         print(sorted_songs)
 
         # Build the playlist
-        self.create_playlist(sorted_songs)
+        self.set_playlist(sorted_songs)
 
-    def create_playlist(self, song_list):
+    def set_playlist(self, song_list):
         media_list = self.instance.media_list_new(song_list)
 
         self.player.set_media_list(media_list)
@@ -78,9 +79,9 @@ class SongPlayer(object):
         return audio_file_list
     
     def change_album(self, album_path):
-        p.stop_playback()
-        p.create_playlist_from_folder(album_path)
-        p.start_playback()
+        self.start_playback()
+        self.create_playlist_from_folder(album_path)
+        self.start_playback()
 
     def get_metadata_sorted(self, file_list):
 
@@ -95,11 +96,20 @@ class SongPlayer(object):
         all_files_metadata = sorted(all_files_metadata, key=operator.itemgetter(3,2,1,0))
 
         return all_files_metadata
+    
+    def play_boot_sound(self):
+        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"assets","boot.wav")
+
+        self.stop_playback()
+        self.set_playlist([file_path])
+        self.start_playback()
 
 
         
 if __name__ == "__main__":
     p = SongPlayer()
+    p.play_boot_sound()
+    time.sleep(5)
     p.change_album("C:\\Users\\Jonathan\\Music\\test2")
 
     #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
