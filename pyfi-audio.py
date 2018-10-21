@@ -38,6 +38,8 @@ class SongPlayer(object):
         sorted_songs = self.first_item_in_nested_list(metadata)
 
         # Debug
+        print("~~~Folder~~~")
+        print(root_directory)
         print("~~~Song List~~~")
         print(song_list)
         print("~~~Metadata~~~")
@@ -89,8 +91,8 @@ class SongPlayer(object):
             metadata_list = [file, metadata.tag.track_num[0], metadata.tag.disc_num[0], metadata.tag.album]
             all_files_metadata.append(metadata_list)
         
-        # Sort it (Filename - track num - disk num - album name)
-        all_files_metadata = sorted(all_files_metadata, key=operator.itemgetter(0,1,2,3))
+        # Sort it (album name -> disk num -> track num -> filename)
+        all_files_metadata = sorted(all_files_metadata, key=operator.itemgetter(3,2,1,0))
 
         return all_files_metadata
 
@@ -98,7 +100,7 @@ class SongPlayer(object):
         
 if __name__ == "__main__":
     p = SongPlayer()
-    p.change_album("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
+    p.change_album("C:\\Users\\Jonathan\\Music\\test2")
 
     #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
     #file_list=p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Emerson, Lake & Palmer\\Pictures At An Exhibition")
