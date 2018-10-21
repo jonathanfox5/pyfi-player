@@ -1,8 +1,9 @@
-import vlc
-import eyed3
-import os
 import operator
+import os
 import time
+
+import eyed3
+import vlc
 
 
 class SongPlayer(object):
@@ -91,7 +92,7 @@ class SongPlayer(object):
         for file in file_list:
             metadata = eyed3.load(file)
             metadata_list = [file, nz(metadata.tag.track_num[0]),
-                             nz(metadata.tag.disc_num[0]), nz(metadata.tag.album,"")]
+                             nz(metadata.tag.disc_num[0]), nz(metadata.tag.album, "")]
             all_files_metadata.append(metadata_list)
 
         # Sort it (album name -> disk num -> track num -> filename)
@@ -110,12 +111,9 @@ class SongPlayer(object):
         self.start_playback()
 
 
-def nz(value, value_if_null = 0):
+def nz(value, value_if_null=0):
     # Copy of the nz function in VBA
     # If value_if_null isn't specified, default to 0
-
-    # if value_if_null is None:
-    #     value_if_null = 0
 
     if value is None:
         return value_if_null
@@ -127,10 +125,4 @@ if __name__ == "__main__":
     p = SongPlayer()
     p.play_boot_sound()
     time.sleep(2)
-    # p.change_album("/share/Rammstein/Mutter")
     p.change_album("/share/Rammstein/Mutter")
-    # p.change_album("C:\\Users\\Jonathan\\Music\\test2")
-
-    #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
-    #file_list=p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Emerson, Lake & Palmer\\Pictures At An Exhibition")
-    #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\test")
