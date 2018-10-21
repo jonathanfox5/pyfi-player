@@ -4,6 +4,7 @@ import os
 import operator
 import time
 
+
 class SongPlayer(object):
 
     def __init__(self):
@@ -29,7 +30,7 @@ class SongPlayer(object):
         first_item_list = []
         for full_item in nested_list:
             first_item_list.append(full_item[0])
-        
+
         return first_item_list
 
     def create_playlist_from_folder(self, root_directory):
@@ -77,7 +78,7 @@ class SongPlayer(object):
 
         print(audio_file_list)
         return audio_file_list
-    
+
     def change_album(self, album_path):
         self.stop_playback()
         self.create_playlist_from_folder(album_path)
@@ -89,16 +90,19 @@ class SongPlayer(object):
         all_files_metadata = []
         for file in file_list:
             metadata = eyed3.load(file)
-            metadata_list = [file, metadata.tag.track_num[0], metadata.tag.disc_num[0], metadata.tag.album]
+            metadata_list = [file, nz(metadata.tag.track_num[0]),
+                             nz(metadata.tag.disc_num[0]), nz(metadata.tag.album,"")]
             all_files_metadata.append(metadata_list)
-        
+
         # Sort it (album name -> disk num -> track num -> filename)
-        all_files_metadata = sorted(all_files_metadata, key=operator.itemgetter(3,2,1,0))
+        all_files_metadata = sorted(
+            all_files_metadata, key=operator.itemgetter(3, 2, 1, 0))
 
         return all_files_metadata
-    
+
     def play_boot_sound(self):
-        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"assets","boot.mp3")
+        file_path = os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), "assets", "boot.mp3")
         file_path = "/share/boot_delayed.mp3"
 
         self.stop_playback()
@@ -107,16 +111,27 @@ class SongPlayer(object):
         self.start_playback()
 
 
-        
+def nz(value, value_if_null = 0):
+    # Copy of the nz function in VBA
+    # If value_if_null isn't specified, default to 0
+
+    # if value_if_null is None:
+    #     value_if_null = 0
+
+    if value is None:
+        return value_if_null
+    else:
+        return value
+
+
 if __name__ == "__main__":
     p = SongPlayer()
-    """ p.play_boot_sound()
-    time.sleep(5) """
-    #p.change_album("/share/Rammstein/Mutter")
-    p.change_album("/share/boot/")
-    #p.change_album("C:\\Users\\Jonathan\\Music\\test2")
+    p.play_boot_sound()
+    #time.sleep(3)
+    # p.change_album("/share/Rammstein/Mutter")
+    p.change_album("/share/Rammstein/Mutter")
+    # p.change_album("C:\\Users\\Jonathan\\Music\\test2")
 
     #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
     #file_list=p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Emerson, Lake & Palmer\\Pictures At An Exhibition")
     #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\test")
-    
