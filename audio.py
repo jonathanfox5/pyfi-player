@@ -1,9 +1,11 @@
 import operator
 import os
-import time
 
 import eyed3
 import vlc
+
+import crawler
+import utilities as u
 
 
 class SongPlayer(object):
@@ -26,18 +28,11 @@ class SongPlayer(object):
     def play_previous_track(self):
         self.player.previous()
 
-    def first_item_in_nested_list(self, nested_list):
-        first_item_list = []
-        for full_item in nested_list:
-            first_item_list.append(full_item[0])
-
-        return first_item_list
-
     def create_playlist_from_folder(self, root_directory):
         # Get list of songs in the directory and sort them by their metadata
-        song_list = self.get_audio_files_in_directory(root_directory)
+        song_list = crawler.get_audio_files_in_directory(root_directory)
         metadata = self.get_metadata_sorted(song_list)
-        sorted_songs = self.first_item_in_nested_list(metadata)
+        sorted_songs = u.first_item_in_nested_list(metadata)
 
         # Debug
         print("~~~Folder~~~")
@@ -57,28 +52,6 @@ class SongPlayer(object):
 
         self.player.set_media_list(media_list)
 
-    def get_audio_files_in_directory(self, root_directory):
-        valid_audio_types = ["mp3"]
-
-        try:
-            all_files = os.listdir(root_directory)
-        except FileNotFoundError:
-            print("Directory does not exist: " + root_directory)
-            return
-
-        audio_file_list = []
-
-        for file_type in valid_audio_types:
-            slice_len = -1 * len(file_type)
-
-            for file_name in all_files:
-                if file_name[slice_len:] == file_type:
-                    audio_file_list.append(
-                        os.path.join(root_directory, file_name))
-
-        print(audio_file_list)
-        return audio_file_list
-
     def change_album(self, album_path):
         self.stop_playback()
         self.create_playlist_from_folder(album_path)
@@ -92,9 +65,9 @@ class SongPlayer(object):
             metadata = eyed3.load(file)
             metadata_list = [
                 file,
-                nz(metadata.tag.track_num[0]),
-                nz(metadata.tag.disc_num[0]),
-                nz(metadata.tag.album, "")
+                u.nz(metadata.tag.track_num[0]),
+                u.nz(metadata.tag.disc_num[0]),
+                u.nz(metadata.tag.album, "")
             ]
             all_files_metadata.append(metadata_list)
 
@@ -110,22 +83,4 @@ class SongPlayer(object):
 
         self.stop_playback()
         self.set_playlist([file_path])
-        time.sleep(2)
         self.start_playback()
-
-
-def nz(value, value_if_null=0):
-    # Copy of the nz function in VBA
-    # If value_if_null isn't specified, default to 0
-
-    if value is None:
-        return value_if_null
-    else:
-        return value
-
-
-if __name__ == "__main__":
-    p = SongPlayer()
-    p.play_boot_sound()
-    time.sleep(2)
-    p.change_album("/share/Rammstein/Mutter")
