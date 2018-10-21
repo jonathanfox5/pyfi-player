@@ -79,7 +79,7 @@ class SongPlayer(object):
         return audio_file_list
     
     def change_album(self, album_path):
-        self.start_playback()
+        self.stop_playback()
         self.create_playlist_from_folder(album_path)
         self.start_playback()
 
@@ -98,19 +98,23 @@ class SongPlayer(object):
         return all_files_metadata
     
     def play_boot_sound(self):
-        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"assets","boot.wav")
+        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"assets","boot.mp3")
+        file_path = "/share/boot_delayed.mp3"
 
         self.stop_playback()
         self.set_playlist([file_path])
+        time.sleep(2)
         self.start_playback()
 
 
         
 if __name__ == "__main__":
     p = SongPlayer()
-    p.play_boot_sound()
-    time.sleep(5)
-    p.change_album("C:\\Users\\Jonathan\\Music\\test2")
+    """ p.play_boot_sound()
+    time.sleep(5) """
+    #p.change_album("/share/Rammstein/Mutter")
+    p.change_album("/share/boot/")
+    #p.change_album("C:\\Users\\Jonathan\\Music\\test2")
 
     #file_list = p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Rammstein\\Mutter")
     #file_list=p.get_audio_files_in_directory("C:\\Users\\Jonathan\\Music\\Amazon MP3\\Emerson, Lake & Palmer\\Pictures At An Exhibition")
