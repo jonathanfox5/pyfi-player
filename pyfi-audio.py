@@ -7,7 +7,6 @@ import vlc
 
 
 class SongPlayer(object):
-
     def __init__(self):
         self.instance = vlc.Instance()
         self.player = self.instance.media_list_player_new()
@@ -91,8 +90,12 @@ class SongPlayer(object):
         all_files_metadata = []
         for file in file_list:
             metadata = eyed3.load(file)
-            metadata_list = [file, nz(metadata.tag.track_num[0]),
-                             nz(metadata.tag.disc_num[0]), nz(metadata.tag.album, "")]
+            metadata_list = [
+                file,
+                nz(metadata.tag.track_num[0]),
+                nz(metadata.tag.disc_num[0]),
+                nz(metadata.tag.album, "")
+            ]
             all_files_metadata.append(metadata_list)
 
         # Sort it (album name -> disk num -> track num -> filename)
@@ -102,8 +105,8 @@ class SongPlayer(object):
         return all_files_metadata
 
     def play_boot_sound(self):
-        file_path = os.path.join(os.path.dirname(
-            os.path.realpath(__file__)), "assets", "boot.mp3")
+        file_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "assets", "boot.mp3")
 
         self.stop_playback()
         self.set_playlist([file_path])

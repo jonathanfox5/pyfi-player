@@ -6,3 +6,6 @@ Prefer pulseaudio not to be installed - VLC defaults to this and causes jutter o
 
 Config:
 Install vlc and pip modules
+
+Dev:
+yapf used for formatting with default settings
