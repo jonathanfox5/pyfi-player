@@ -8,7 +8,7 @@ import crawler
 import utilities as u
 
 
-class SongPlayer(object):
+class SongPlayer():
     def __init__(self):
         self.instance = vlc.Instance()
         self.player = self.instance.media_list_player_new()

@@ -51,9 +51,10 @@ def test_data(db):
     execute_sql(db, sql, values)
 
 
-db = db_connect()
-delete_table(db)
-build_table(db)
-test_data(db)
-delete_table(db)
-db_disconnect(db)
+if __name__ == "__main__":
+    db = db_connect()
+    delete_table(db)
+    build_table(db)
+    test_data(db)
+    delete_table(db)
+    db_disconnect(db)
